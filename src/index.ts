@@ -127,22 +127,15 @@ server.tool(
         ],
       };
     } catch (error) {
+      let errorMessage = "Failed to retrieve products data";
       if (error instanceof CustomError) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Failed to retrieve products data with this error: ${error.message}`,
-            },
-          ],
-          isError: true,
-        };
+        errorMessage = `Failed to retrieve products data with this error: ${error.message}`;
       }
       return {
         content: [
           {
             type: "text",
-            text: `Failed to retrieve products data`,
+            text: errorMessage,
           },
         ],
         isError: true,
@@ -178,22 +171,15 @@ server.tool(
         ],
       };
     } catch (error) {
+      let errorMessage = "Failed to retrieve customers data";
       if (error instanceof CustomError) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Failed to retrieve customers data with this error: ${error.message}`,
-            },
-          ],
-          isError: true,
-        };
+        errorMessage = `Failed to retrieve customers data with this error: ${error.message}`;
       }
       return {
         content: [
           {
             type: "text",
-            text: `Failed to retrieve customers data`,
+            text: errorMessage,
           },
         ],
         isError: true,
@@ -231,22 +217,15 @@ server.tool(
         ],
       };
     } catch (error) {
+      let errorMessage = "Failed to tag customer";
       if (error instanceof CustomError) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Failed to tag customer with this error: ${error.message}`,
-            },
-          ],
-          isError: true,
-        };
+        errorMessage = `Failed to tag customer with this error: ${error.message}`;
       }
       return {
         content: [
           {
             type: "text",
-            text: `Failed to tag customer`,
+            text: errorMessage,
           },
         ],
         isError: true,
@@ -301,22 +280,15 @@ server.tool(
         ],
       };
     } catch (error) {
+      let errorMessage = "Failed to retrieve orders data";
       if (error instanceof CustomError) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Failed to retrieve orders data with this error: ${error.message}`,
-            },
-          ],
-          isError: true,
-        };
+        errorMessage = `Failed to retrieve orders data with this error: ${error.message}`;
       }
       return {
         content: [
           {
             type: "text",
-            text: `Failed to retrieve orders data`,
+            text: errorMessage,
           },
         ],
         isError: true,

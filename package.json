@@ -1,5 +1,5 @@
 {
-  "name": "shopify-tools",
+  "name": "shopify-mcp-server",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -7,9 +7,9 @@
     "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\""
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "author": "Amir Bengherbi",
+  "license": "MIT",
+  "description": "MCP Server for Shopify API, enabling interaction with store data through GraphQL API.",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.4.1",
     "graphql-request": "^7.1.2",
@@ -28,6 +28,6 @@
     "build"
   ],
   "bin": {
-    "shopify-tools": "./build/index.js"
+    "shopify-mcp-server": "./build/index.js"
   }
 }

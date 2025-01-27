@@ -15,42 +15,114 @@ MCP Server for Shopify API, enabling interaction with store data through GraphQL
 ## Tools
 
 1. `get-products`
-   * Get products from your Shopify store
+   * Get all products or search by title
    * Inputs:
      * `searchTitle` (optional string): Filter products by title
      * `limit` (number): Maximum number of products to return
-   * Returns: Formatted product details including:
-     * Title, description, handle
-     * Variants with prices, SKUs, and inventory policies
+   * Returns: Formatted product details including title, description, handle, and variants
 
-2. `get-customers`
-   * Retrieve customer information
+2. `get-products-by-collection`
+   * Get products from a specific collection
+   * Inputs:
+     * `collectionId` (string): ID of the collection to get products from
+     * `limit` (optional number, default: 10): Maximum number of products to return
+   * Returns: Formatted product details from the specified collection
+
+3. `get-products-by-ids`
+   * Get products by their IDs
+   * Inputs:
+     * `productIds` (array of strings): Array of product IDs to retrieve
+   * Returns: Formatted product details for the specified products
+
+4. `get-variants-by-ids`
+   * Get product variants by their IDs
+   * Inputs:
+     * `variantIds` (array of strings): Array of variant IDs to retrieve
+   * Returns: Detailed variant information including product details
+
+5. `get-customers`
+   * Get shopify customers with pagination support
    * Inputs:
      * `limit` (optional number): Maximum number of customers to return
-     * `next` (optional string): Pagination cursor for next page
+     * `next` (optional string): Next page cursor
    * Returns: Customer data in JSON format
 
-3. `tag-customer`
+6. `tag-customer`
    * Add tags to a customer
    * Inputs:
-     * `customerId` (string): ID of the customer to tag
+     * `customerId` (string): Customer ID to tag
      * `tags` (array of strings): Tags to add to the customer
    * Returns: Success or failure message
 
-4. `get-orders`
-   * Fetch and filter orders
+7. `get-orders`
+   * Get orders with advanced filtering and sorting
    * Inputs:
-     * `first` (optional number): Number of orders to return
-     * `after` (optional string): Pagination cursor
-     * `query` (optional string): Filter query
-     * `sortKey` (optional enum): Sort field ('PROCESSED_AT', 'TOTAL_PRICE', 'ID', 'CREATED_AT', 'UPDATED_AT', 'ORDER_NUMBER')
+     * `first` (optional number): Limit of orders to return
+     * `after` (optional string): Next page cursor
+     * `query` (optional string): Filter orders using query syntax
+     * `sortKey` (optional enum): Field to sort by ('PROCESSED_AT', 'TOTAL_PRICE', 'ID', 'CREATED_AT', 'UPDATED_AT', 'ORDER_NUMBER')
      * `reverse` (optional boolean): Reverse sort order
-   * Returns: Formatted order details including:
-     * Order ID and status
-     * Financial information
-     * Customer details
-     * Shipping information
-     * Line items with variants
+   * Returns: Formatted order details
+
+8. `get-order`
+   * Get a single order by ID
+   * Inputs:
+     * `orderId` (string): ID of the order to retrieve
+   * Returns: Detailed order information
+
+9. `create-discount`
+   * Create a basic discount code
+   * Inputs:
+     * `title` (string): Title of the discount
+     * `code` (string): Discount code that customers will enter
+     * `valueType` (enum): Type of discount ('percentage' or 'fixed_amount')
+     * `value` (number): Discount value (percentage as decimal or fixed amount)
+     * `startsAt` (string): Start date in ISO format
+     * `endsAt` (optional string): Optional end date in ISO format
+     * `appliesOncePerCustomer` (boolean): Whether discount can be used only once per customer
+   * Returns: Created discount details
+
+10. `create-draft-order`
+    * Create a draft order
+    * Inputs:
+      * `lineItems` (array): Array of items with variantId and quantity
+      * `email` (string): Customer email
+      * `shippingAddress` (object): Shipping address details
+      * `note` (optional string): Optional note for the order
+    * Returns: Created draft order details
+
+11. `complete-draft-order`
+    * Complete a draft order
+    * Inputs:
+      * `draftOrderId` (string): ID of the draft order to complete
+      * `variantId` (string): ID of the variant in the draft order
+    * Returns: Completed order details
+
+12. `get-collections`
+    * Get all collections
+    * Inputs:
+      * `limit` (optional number, default: 10): Maximum number of collections to return
+      * `name` (optional string): Filter collections by name
+    * Returns: Collection details
+
+13. `get-shop`
+    * Get shop details
+    * Inputs: None
+    * Returns: Basic shop information
+
+14. `get-shop-details`
+    * Get extended shop details including shipping countries
+    * Inputs: None
+    * Returns: Extended shop information including shipping countries
+
+15. `manage-webhook`
+    * Subscribe, find, or unsubscribe webhooks
+    * Inputs:
+      * `action` (enum): Action to perform ('subscribe', 'find', 'unsubscribe')
+      * `callbackUrl` (string): Webhook callback URL
+      * `topic` (enum): Webhook topic to subscribe to
+      * `webhookId` (optional string): Webhook ID (required for unsubscribe)
+    * Returns: Webhook details or success message
 
 ## Setup
 

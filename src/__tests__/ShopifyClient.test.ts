@@ -314,7 +314,7 @@ describe("ShopifyClient", () => {
 
   describe("Webhooks", () => {
     it("should manage webhooks", async () => {
-      const callbackUrl = "https://club.co/webhook";
+      const callbackUrl = "https://example.com/webhook";
       const topic = ShopifyWebhookTopic.ORDERS_UPDATED;
 
       const webhook = await client.subscribeWebhook(

@@ -1650,7 +1650,7 @@ export class ShopifyClient implements ShopifyClientPort {
       accessToken,
       query: graphqlQuery,
       variables: {
-        topics: [topic],
+        topics: [this.mapTopicToGraphqlTopic(topic)],
         callbackUrl,
       },
     });

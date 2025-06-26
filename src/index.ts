@@ -618,6 +618,12 @@ function handleError(
   let errorMessage = defaultMessage;
   if (error instanceof CustomError) {
     errorMessage = `${defaultMessage}: ${error.message}`;
+  } else if (error instanceof Error) {
+    errorMessage = `${defaultMessage}: ${error.message}`;
+    console.error("Full error details:", error);
+  } else {
+    errorMessage = `${defaultMessage}: ${String(error)}`;
+    console.error("Unknown error type:", error);
   }
   return {
     content: [{ type: "text", text: errorMessage }],

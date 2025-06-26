@@ -44,6 +44,26 @@ import {
   ShopifyOrdersGraphqlQueryParams,
   ShopifyOrdersGraphqlResponse,
   ShopifyOrderGraphql,
+  // New imports for product management
+  ProductCreateInput,
+  ProductCreateResponse,
+  ProductUpdateInput,
+  ProductUpdateResponse,
+  ProductVariantsBulkInput,
+  ProductVariantsBulkCreateResponse,
+  ProductVariantsBulkUpdateResponse,
+  ProductVariantsBulkDeleteResponse,
+  StagedUploadInput,
+  StagedUploadsCreateResponse,
+  CreateMediaInput,
+  ProductCreateMediaResponse,
+  MetafieldsSetInput,
+  MetafieldsSetResponse,
+  CollectionCreateInput,
+  CollectionCreateResponse,
+  CollectionUpdateInput,
+  CollectionUpdateResponse,
+  UserError,
 } from "./ShopifyClientPort.js";
 import { gql } from "graphql-request";
 
@@ -100,7 +120,7 @@ const productFragment = gql`
 export class ShopifyClient implements ShopifyClientPort {
   private readonly logger = console;
 
-  private SHOPIFY_API_VERSION = "2024-04";
+  private SHOPIFY_API_VERSION = "2025-04";
 
   static getShopifyOrdersNextPage(link: Maybe<string>): string | undefined {
     if (!link) return;
@@ -230,6 +250,17 @@ export class ShopifyClient implements ShopifyClientPort {
       const responseData = await response.json();
 
       if (!response.ok || responseData?.errors) {
+        // Enhanced error logging for debugging
+        console.error('Shopify GraphQL Error Details:', {
+          status: response.status,
+          statusText: response.statusText,
+          url,
+          query: query.substring(0, 200) + '...',
+          variables,
+          responseData,
+          headers: Object.fromEntries(response.headers.entries())
+        });
+        
         const error = new Error("Shopify GraphQL Error");
         throw Object.assign(error, {
           response: { data: responseData, status: response.status },
@@ -578,7 +609,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables: {
@@ -678,7 +709,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables: {
@@ -740,7 +771,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables: {
@@ -881,7 +912,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables,
@@ -1002,7 +1033,7 @@ export class ShopifyClient implements ShopifyClientPort {
     `;
 
     const res = await this.shopifyGraphqlRequest<ShopResponse>({
-      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
     });
@@ -1034,7 +1065,7 @@ export class ShopifyClient implements ShopifyClientPort {
     `;
 
     const res = await this.shopifyGraphqlRequest<ShopResponse>({
-      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
     });
@@ -1092,7 +1123,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
     });
@@ -1213,7 +1244,7 @@ export class ShopifyClient implements ShopifyClientPort {
         >;
       };
     }>({
-      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
     });
@@ -1357,7 +1388,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables: {
@@ -1418,7 +1449,7 @@ export class ShopifyClient implements ShopifyClientPort {
         >;
       };
     }>({
-      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
     });
@@ -1497,7 +1528,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables: {
@@ -1567,7 +1598,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables: {
@@ -1646,7 +1677,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables: {
@@ -1698,7 +1729,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables: {
@@ -1714,6 +1745,745 @@ export class ShopifyClient implements ShopifyClientPort {
         webhookId,
       });
     }
+  }
+
+  // New product management methods implementation
+
+  async createProduct(
+    accessToken: string,
+    shop: string,
+    productInput: ProductCreateInput
+  ): Promise<ProductCreateResponse> {
+    const graphqlQuery = gql`
+      mutation productCreate($input: ProductInput!) {
+        productCreate(input: $input) {
+          product {
+            id
+            title
+            handle
+            status
+          }
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `;
+
+    const variables = {
+      input: {
+        title: productInput.title,
+        descriptionHtml: productInput.descriptionHtml,
+        vendor: productInput.vendor,
+        productType: productInput.productType,
+        handle: productInput.handle,
+        status: productInput.status,
+        tags: productInput.tags,
+        productOptions: productInput.productOptions,
+        metafields: productInput.metafields?.map(metafield => ({
+          key: metafield.key,
+          namespace: metafield.namespace,
+          value: metafield.value,
+          type: metafield.type
+        }))
+      }
+    };
+
+    const res = await this.shopifyGraphqlRequest<{
+      data: {
+        productCreate: {
+          product: {
+            id: string;
+            title: string;
+            handle: string;
+            status: string;
+          };
+          userErrors: UserError[];
+        };
+      };
+    }>({
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      accessToken,
+      query: graphqlQuery,
+      variables
+    });
+
+    const product = res.data.data.productCreate.product;
+    const userErrors = res.data.data.productCreate.userErrors;
+
+    if (userErrors.length > 0) {
+      throw getGraphqlShopifyUserError(userErrors, {
+        shop,
+        productInput
+      });
+    }
+
+    return {
+      id: product.id,
+      title: product.title,
+      handle: product.handle,
+      status: product.status
+    };
+  }
+
+  async updateProduct(
+    accessToken: string,
+    shop: string,
+    productInput: ProductUpdateInput
+  ): Promise<ProductUpdateResponse> {
+    const graphqlQuery = gql`
+      mutation ProductUpdate($product: ProductUpdateInput!) {
+        productUpdate(product: $product) {
+          product {
+            id
+            title
+            handle
+            status
+          }
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `;
+
+    const variables = {
+      product: {
+        id: this.ensureGid(productInput.id, 'Product'),
+        title: productInput.title,
+        descriptionHtml: productInput.descriptionHtml,
+        vendor: productInput.vendor,
+        productType: productInput.productType,
+        handle: productInput.handle,
+        status: productInput.status,
+        tags: productInput.tags,
+        metafields: productInput.metafields?.map(metafield => ({
+          key: metafield.key,
+          namespace: metafield.namespace,
+          value: metafield.value,
+          type: metafield.type
+        }))
+      }
+    };
+
+    const res = await this.shopifyGraphqlRequest<{
+      data: {
+        productUpdate: {
+          product: {
+            id: string;
+            title: string;
+            handle: string;
+            status: string;
+          };
+          userErrors: UserError[];
+        };
+      };
+    }>({
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      accessToken,
+      query: graphqlQuery,
+      variables
+    });
+
+    const product = res.data.data.productUpdate.product;
+    const userErrors = res.data.data.productUpdate.userErrors;
+
+    if (userErrors.length > 0) {
+      throw getGraphqlShopifyUserError(userErrors, {
+        shop,
+        productInput
+      });
+    }
+
+    return {
+      id: product.id,
+      title: product.title,
+      handle: product.handle,
+      status: product.status
+    };
+  }
+
+  async createProductVariantsBulk(
+    accessToken: string,
+    shop: string,
+    productId: string,
+    variants: ProductVariantsBulkInput[]
+  ): Promise<ProductVariantsBulkCreateResponse> {
+    const graphqlQuery = gql`
+      mutation ProductVariantsBulkCreate($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
+        productVariantsBulkCreate(productId: $productId, variants: $variants) {
+          productVariants {
+            id
+            title
+            price
+            sku
+          }
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `;
+
+    const variables = {
+      productId: this.ensureGid(productId, 'Product'),
+      variants: variants.map(variant => ({
+        optionValues: variant.optionValues,
+        price: variant.price,
+        compareAtPrice: variant.compareAtPrice,
+        barcode: variant.barcode,
+        inventoryPolicy: variant.inventoryPolicy,
+        metafields: variant.metafields?.map(metafield => ({
+          key: metafield.key,
+          namespace: metafield.namespace,
+          value: metafield.value,
+          type: metafield.type
+        }))
+      }))
+    };
+
+    const res = await this.shopifyGraphqlRequest<{
+      data: {
+        productVariantsBulkCreate: {
+          productVariants: Array<{
+            id: string;
+            title: string;
+            price: string;
+            sku?: string;
+          }>;
+          userErrors: UserError[];
+        };
+      };
+    }>({
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      accessToken,
+      query: graphqlQuery,
+      variables
+    });
+
+    const productVariants = res.data.data.productVariantsBulkCreate.productVariants;
+    const userErrors = res.data.data.productVariantsBulkCreate.userErrors;
+
+    if (userErrors.length > 0) {
+      throw getGraphqlShopifyUserError(userErrors, {
+        shop,
+        productId,
+        variants
+      });
+    }
+
+    return {
+      productVariants,
+      userErrors
+    };
+  }
+
+  async updateProductVariantsBulk(
+    accessToken: string,
+    shop: string,
+    productId: string,
+    variants: ProductVariantsBulkInput[]
+  ): Promise<ProductVariantsBulkUpdateResponse> {
+    const graphqlQuery = gql`
+      mutation ProductVariantsBulkUpdate($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
+        productVariantsBulkUpdate(productId: $productId, variants: $variants) {
+          productVariants {
+            id
+            title
+            price
+            sku
+          }
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `;
+
+    const variables = {
+      productId: this.ensureGid(productId, 'Product'),
+      variants: variants.map(variant => ({
+        id: variant.id ? this.ensureGid(variant.id, 'ProductVariant') : undefined,
+        optionValues: variant.optionValues,
+        price: variant.price,
+        compareAtPrice: variant.compareAtPrice,
+        barcode: variant.barcode,
+        inventoryPolicy: variant.inventoryPolicy,
+        metafields: variant.metafields?.map(metafield => ({
+          key: metafield.key,
+          namespace: metafield.namespace,
+          value: metafield.value,
+          type: metafield.type
+        }))
+      }))
+    };
+
+    const res = await this.shopifyGraphqlRequest<{
+      data: {
+        productVariantsBulkUpdate: {
+          productVariants: Array<{
+            id: string;
+            title: string;
+            price: string;
+            sku?: string;
+          }>;
+          userErrors: UserError[];
+        };
+      };
+    }>({
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      accessToken,
+      query: graphqlQuery,
+      variables
+    });
+
+    const productVariants = res.data.data.productVariantsBulkUpdate.productVariants;
+    const userErrors = res.data.data.productVariantsBulkUpdate.userErrors;
+
+    if (userErrors.length > 0) {
+      throw getGraphqlShopifyUserError(userErrors, {
+        shop,
+        productId,
+        variants
+      });
+    }
+
+    return {
+      productVariants,
+      userErrors
+    };
+  }
+
+  async deleteProductVariantsBulk(
+    accessToken: string,
+    shop: string,
+    productId: string,
+    variantIds: string[]
+  ): Promise<ProductVariantsBulkDeleteResponse> {
+    const graphqlQuery = gql`
+      mutation ProductVariantsBulkDelete($productId: ID!, $variantsIds: [ID!]!) {
+        productVariantsBulkDelete(productId: $productId, variantsIds: $variantsIds) {
+          product {
+            id
+          }
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `;
+
+    const variables = {
+      productId: this.ensureGid(productId, 'Product'),
+      variantsIds: variantIds.map(id => this.ensureGid(id, 'ProductVariant'))
+    };
+
+    const res = await this.shopifyGraphqlRequest<{
+      data: {
+        productVariantsBulkDelete: {
+          product: {
+            id: string;
+          };
+          userErrors: UserError[];
+        };
+      };
+    }>({
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      accessToken,
+      query: graphqlQuery,
+      variables
+    });
+
+    const product = res.data.data.productVariantsBulkDelete.product;
+    const userErrors = res.data.data.productVariantsBulkDelete.userErrors;
+
+    if (userErrors.length > 0) {
+      throw getGraphqlShopifyUserError(userErrors, {
+        shop,
+        productId,
+        variantIds
+      });
+    }
+
+    return {
+      product,
+      userErrors
+    };
+  }
+
+  async createStagedUploads(
+    accessToken: string,
+    shop: string,
+    uploads: StagedUploadInput[]
+  ): Promise<StagedUploadsCreateResponse> {
+    const graphqlQuery = gql`
+      mutation StagedUploadsCreate($input: [StagedUploadInput!]!) {
+        stagedUploadsCreate(input: $input) {
+          stagedTargets {
+            url
+            resourceUrl
+            parameters {
+              name
+              value
+            }
+          }
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `;
+
+    const variables = {
+      input: uploads.map(upload => ({
+        filename: upload.filename,
+        mimeType: upload.mimeType,
+        httpMethod: upload.httpMethod,
+        resource: upload.resource,
+        fileSize: upload.fileSize
+      }))
+    };
+
+    const res = await this.shopifyGraphqlRequest<{
+      data: {
+        stagedUploadsCreate: {
+          stagedTargets: Array<{
+            url: string;
+            resourceUrl: string;
+            parameters: Array<{
+              name: string;
+              value: string;
+            }>;
+          }>;
+          userErrors: UserError[];
+        };
+      };
+    }>({
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      accessToken,
+      query: graphqlQuery,
+      variables
+    });
+
+    const stagedTargets = res.data.data.stagedUploadsCreate.stagedTargets;
+    const userErrors = res.data.data.stagedUploadsCreate.userErrors;
+
+    if (userErrors.length > 0) {
+      throw getGraphqlShopifyUserError(userErrors, {
+        shop,
+        uploads
+      });
+    }
+
+    return {
+      stagedTargets,
+      userErrors
+    };
+  }
+
+  async createProductMedia(
+    accessToken: string,
+    shop: string,
+    productId: string,
+    media: CreateMediaInput[]
+  ): Promise<ProductCreateMediaResponse> {
+    const graphqlQuery = gql`
+      mutation ProductCreateMedia($media: [CreateMediaInput!]!, $productId: ID!) {
+        productCreateMedia(media: $media, productId: $productId) {
+          media {
+            alt
+            mediaContentType
+            status
+          }
+          mediaUserErrors {
+            field
+            message
+          }
+          product {
+            id
+          }
+        }
+      }
+    `;
+
+    const variables = {
+      productId,
+      media: media.map(m => ({
+        alt: m.alt,
+        mediaContentType: m.mediaContentType,
+        originalSource: m.originalSource
+      }))
+    };
+
+    const res = await this.shopifyGraphqlRequest<{
+      data: {
+        productCreateMedia: {
+          media: Array<{
+            alt?: string;
+            mediaContentType: string;
+            status: string;
+          }>;
+          mediaUserErrors: UserError[];
+          product: {
+            id: string;
+          };
+        };
+      };
+    }>({
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      accessToken,
+      query: graphqlQuery,
+      variables
+    });
+
+    const mediaData = res.data.data.productCreateMedia.media;
+    const mediaUserErrors = res.data.data.productCreateMedia.mediaUserErrors;
+    const product = res.data.data.productCreateMedia.product;
+
+    if (mediaUserErrors.length > 0) {
+      throw getGraphqlShopifyUserError(mediaUserErrors, {
+        shop,
+        productId,
+        media
+      });
+    }
+
+    return {
+      media: mediaData,
+      mediaUserErrors,
+      product
+    };
+  }
+
+  async setMetafields(
+    accessToken: string,
+    shop: string,
+    metafields: MetafieldsSetInput[]
+  ): Promise<MetafieldsSetResponse> {
+    const graphqlQuery = gql`
+      mutation MetafieldsSet($metafields: [MetafieldsSetInput!]!) {
+        metafieldsSet(metafields: $metafields) {
+          metafields {
+            id
+            key
+            namespace
+            value
+            type
+            createdAt
+            updatedAt
+          }
+          userErrors {
+            field
+            message
+            code
+          }
+        }
+      }
+    `;
+
+    const variables = {
+      metafields: metafields.map(metafield => ({
+        key: metafield.key,
+        namespace: metafield.namespace,
+        ownerId: metafield.ownerId,
+        type: metafield.type,
+        value: metafield.value
+      }))
+    };
+
+    const res = await this.shopifyGraphqlRequest<{
+      data: {
+        metafieldsSet: {
+          metafields: Array<{
+            id: string;
+            key: string;
+            namespace: string;
+            value: string;
+            type: string;
+            createdAt: string;
+            updatedAt: string;
+          }>;
+          userErrors: UserError[];
+        };
+      };
+    }>({
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      accessToken,
+      query: graphqlQuery,
+      variables
+    });
+
+    const metafieldsData = res.data.data.metafieldsSet.metafields;
+    const userErrors = res.data.data.metafieldsSet.userErrors;
+
+    if (userErrors.length > 0) {
+      throw getGraphqlShopifyUserError(userErrors, {
+        shop,
+        metafields
+      });
+    }
+
+    return {
+      metafields: metafieldsData,
+      userErrors
+    };
+  }
+
+  async createCollection(
+    accessToken: string,
+    shop: string,
+    collectionInput: CollectionCreateInput
+  ): Promise<CollectionCreateResponse> {
+    const graphqlQuery = gql`
+      mutation CollectionCreate($input: CollectionInput!) {
+        collectionCreate(input: $input) {
+          collection {
+            id
+            title
+            handle
+            descriptionHtml
+          }
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `;
+
+    const variables = {
+      input: {
+        title: collectionInput.title,
+        descriptionHtml: collectionInput.descriptionHtml,
+        handle: collectionInput.handle,
+        products: collectionInput.products,
+        ruleSet: collectionInput.ruleSet,
+        metafields: collectionInput.metafields?.map(metafield => ({
+          key: metafield.key,
+          namespace: metafield.namespace,
+          value: metafield.value,
+          type: metafield.type
+        }))
+      }
+    };
+
+    const res = await this.shopifyGraphqlRequest<{
+      data: {
+        collectionCreate: {
+          collection: {
+            id: string;
+            title: string;
+            handle: string;
+            descriptionHtml?: string;
+          };
+          userErrors: UserError[];
+        };
+      };
+    }>({
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      accessToken,
+      query: graphqlQuery,
+      variables
+    });
+
+    const collection = res.data.data.collectionCreate.collection;
+    const userErrors = res.data.data.collectionCreate.userErrors;
+
+    if (userErrors.length > 0) {
+      throw getGraphqlShopifyUserError(userErrors, {
+        shop,
+        collectionInput
+      });
+    }
+
+    return {
+      id: collection.id,
+      title: collection.title,
+      handle: collection.handle,
+      descriptionHtml: collection.descriptionHtml
+    };
+  }
+
+  async updateCollection(
+    accessToken: string,
+    shop: string,
+    collectionInput: CollectionUpdateInput
+  ): Promise<CollectionUpdateResponse> {
+    const graphqlQuery = gql`
+      mutation CollectionUpdate($input: CollectionInput!) {
+        collectionUpdate(input: $input) {
+          collection {
+            id
+            title
+            handle
+            descriptionHtml
+          }
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `;
+
+    const variables = {
+      input: {
+        id: this.ensureGid(collectionInput.id, 'Collection'),
+        title: collectionInput.title,
+        descriptionHtml: collectionInput.descriptionHtml,
+        handle: collectionInput.handle,
+        products: collectionInput.products?.map(id => this.ensureGid(id, 'Product')),
+        ruleSet: collectionInput.ruleSet,
+        metafields: collectionInput.metafields?.map(metafield => ({
+          key: metafield.key,
+          namespace: metafield.namespace,
+          value: metafield.value,
+          type: metafield.type
+        }))
+      }
+    };
+
+    const res = await this.shopifyGraphqlRequest<{
+      data: {
+        collectionUpdate: {
+          collection: {
+            id: string;
+            title: string;
+            handle: string;
+            descriptionHtml?: string;
+          };
+          userErrors: UserError[];
+        };
+      };
+    }>({
+      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      accessToken,
+      query: graphqlQuery,
+      variables
+    });
+
+    const collection = res.data.data.collectionUpdate.collection;
+    const userErrors = res.data.data.collectionUpdate.userErrors;
+
+    if (userErrors.length > 0) {
+      throw getGraphqlShopifyUserError(userErrors, {
+        shop,
+        collectionInput
+      });
+    }
+
+    return {
+      id: collection.id,
+      title: collection.title,
+      handle: collection.handle,
+      descriptionHtml: collection.descriptionHtml
+    };
   }
 
   private getOrdersFields(fields?: string[]): string {
@@ -1746,6 +2516,13 @@ export class ShopifyClient implements ShopifyClientPort {
       throw new Error("Invalid GID");
     }
     return id;
+  }
+
+  public ensureGid(id: string, type: string): string {
+    if (id.startsWith('gid://shopify/')) {
+      return id;
+    }
+    return `gid://shopify/${type}/${id}`;
   }
 
   async getPriceRule(

@@ -607,6 +607,405 @@ server.tool(
   }
 );
 
+// Product Management Tools
+server.tool(
+  "create-product",
+  "Create a new product with variants and options",
+  {
+    title: z.string().describe("Product title"),
+    descriptionHtml: z.string().optional().describe("Product description in HTML"),
+    vendor: z.string().optional().describe("Product vendor"),
+    productType: z.string().optional().describe("Product type"),
+    handle: z.string().optional().describe("Product handle/slug"),
+    status: z.enum(["ACTIVE", "ARCHIVED", "DRAFT"]).optional().describe("Product status"),
+    tags: z.array(z.string()).optional().describe("Product tags"),
+    productOptions: z.array(z.object({
+      name: z.string(),
+      values: z.array(z.object({
+        name: z.string()
+      }))
+    })).optional().describe("Product options (e.g., Size, Color)"),
+    metafields: z.array(z.object({
+      key: z.string(),
+      namespace: z.string(),
+      value: z.string(),
+      type: z.string()
+    })).optional().describe("Product metafields")
+  },
+  async ({ title, descriptionHtml, vendor, productType, handle, status, tags, productOptions, metafields }) => {
+    const client = new ShopifyClient();
+    try {
+      const product = await client.createProduct(
+        SHOPIFY_ACCESS_TOKEN,
+        MYSHOPIFY_DOMAIN,
+        {
+          title,
+          descriptionHtml,
+          vendor,
+          productType,
+          handle,
+          status,
+          tags,
+          productOptions,
+          metafields
+        }
+      );
+      return {
+        content: [{ type: "text", text: JSON.stringify(product, null, 2) }],
+      };
+    } catch (error) {
+      return handleError("Failed to create product", error);
+    }
+  }
+);
+
+server.tool(
+  "update-product",
+  "Update an existing product",
+  {
+    id: z.string().describe("Product ID to update"),
+    title: z.string().optional().describe("Product title"),
+    descriptionHtml: z.string().optional().describe("Product description in HTML"),
+    vendor: z.string().optional().describe("Product vendor"),
+    productType: z.string().optional().describe("Product type"),
+    handle: z.string().optional().describe("Product handle/slug"),
+    status: z.enum(["ACTIVE", "ARCHIVED", "DRAFT"]).optional().describe("Product status"),
+    tags: z.array(z.string()).optional().describe("Product tags"),
+    metafields: z.array(z.object({
+      key: z.string(),
+      namespace: z.string(),
+      value: z.string(),
+      type: z.string()
+    })).optional().describe("Product metafields")
+  },
+  async ({ id, title, descriptionHtml, vendor, productType, handle, status, tags, metafields }) => {
+    const client = new ShopifyClient();
+    try {
+      const product = await client.updateProduct(
+        SHOPIFY_ACCESS_TOKEN,
+        MYSHOPIFY_DOMAIN,
+        {
+          id,
+          title,
+          descriptionHtml,
+          vendor,
+          productType,
+          handle,
+          status,
+          tags,
+          metafields
+        }
+      );
+      return {
+        content: [{ type: "text", text: JSON.stringify(product, null, 2) }],
+      };
+    } catch (error) {
+      return handleError("Failed to update product", error);
+    }
+  }
+);
+
+server.tool(
+  "create-product-variants-bulk",
+  "Create multiple product variants at once",
+  {
+    productId: z.string().describe("Product ID to add variants to"),
+    variants: z.array(z.object({
+      optionValues: z.array(z.object({
+        optionName: z.string(),
+        name: z.string()
+      })).optional().describe("Option values for this variant"),
+      price: z.string().optional().describe("Variant price"),
+      compareAtPrice: z.string().optional().describe("Compare at price"),
+      barcode: z.string().optional().describe("Barcode"),
+      inventoryPolicy: z.enum(["DENY", "CONTINUE"]).optional().describe("Inventory policy"),
+      inventoryManagement: z.enum(["SHOPIFY", "NOT_MANAGED"]).optional().describe("Inventory management"),
+      inventoryQuantity: z.number().optional().describe("Inventory quantity"),
+      sku: z.string().optional().describe("SKU"),
+      weight: z.number().optional().describe("Weight"),
+      weightUnit: z.enum(["GRAMS", "KILOGRAMS", "OUNCES", "POUNDS"]).optional().describe("Weight unit"),
+      requiresShipping: z.boolean().optional().describe("Requires shipping"),
+      metafields: z.array(z.object({
+        key: z.string(),
+        namespace: z.string(),
+        value: z.string(),
+        type: z.string()
+      })).optional().describe("Variant metafields")
+    })).describe("Array of variants to create")
+  },
+  async ({ productId, variants }) => {
+    const client = new ShopifyClient();
+    try {
+      const result = await client.createProductVariantsBulk(
+        SHOPIFY_ACCESS_TOKEN,
+        MYSHOPIFY_DOMAIN,
+        productId,
+        variants
+      );
+      return {
+        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+      };
+    } catch (error) {
+      return handleError("Failed to create product variants", error);
+    }
+  }
+);
+
+server.tool(
+  "update-product-variants-bulk",
+  "Update multiple product variants at once",
+  {
+    productId: z.string().describe("Product ID"),
+    variants: z.array(z.object({
+      id: z.string().describe("Variant ID to update"),
+      optionValues: z.array(z.object({
+        optionName: z.string(),
+        name: z.string()
+      })).optional().describe("Option values for this variant"),
+      price: z.string().optional().describe("Variant price"),
+      compareAtPrice: z.string().optional().describe("Compare at price"),
+      barcode: z.string().optional().describe("Barcode"),
+      inventoryPolicy: z.enum(["DENY", "CONTINUE"]).optional().describe("Inventory policy"),
+      inventoryManagement: z.enum(["SHOPIFY", "NOT_MANAGED"]).optional().describe("Inventory management"),
+      inventoryQuantity: z.number().optional().describe("Inventory quantity"),
+      sku: z.string().optional().describe("SKU"),
+      weight: z.number().optional().describe("Weight"),
+      weightUnit: z.enum(["GRAMS", "KILOGRAMS", "OUNCES", "POUNDS"]).optional().describe("Weight unit"),
+      requiresShipping: z.boolean().optional().describe("Requires shipping"),
+      metafields: z.array(z.object({
+        key: z.string(),
+        namespace: z.string(),
+        value: z.string(),
+        type: z.string()
+      })).optional().describe("Variant metafields")
+    })).describe("Array of variants to update")
+  },
+  async ({ productId, variants }) => {
+    const client = new ShopifyClient();
+    try {
+      const result = await client.updateProductVariantsBulk(
+        SHOPIFY_ACCESS_TOKEN,
+        MYSHOPIFY_DOMAIN,
+        productId,
+        variants
+      );
+      return {
+        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+      };
+    } catch (error) {
+      return handleError("Failed to update product variants", error);
+    }
+  }
+);
+
+server.tool(
+  "delete-product-variants-bulk",
+  "Delete multiple product variants at once",
+  {
+    productId: z.string().describe("Product ID"),
+    variantIds: z.array(z.string()).describe("Array of variant IDs to delete")
+  },
+  async ({ productId, variantIds }) => {
+    const client = new ShopifyClient();
+    try {
+      const result = await client.deleteProductVariantsBulk(
+        SHOPIFY_ACCESS_TOKEN,
+        MYSHOPIFY_DOMAIN,
+        productId,
+        variantIds
+      );
+      return {
+        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+      };
+    } catch (error) {
+      return handleError("Failed to delete product variants", error);
+    }
+  }
+);
+
+server.tool(
+  "create-staged-uploads",
+  "Create staged uploads for media files",
+  {
+    uploads: z.array(z.object({
+      filename: z.string().describe("Filename"),
+      mimeType: z.string().describe("MIME type (e.g., image/jpeg)"),
+      httpMethod: z.literal("POST").describe("HTTP method"),
+      resource: z.enum(["IMAGE", "VIDEO", "MODEL_3D"]).describe("Resource type"),
+      fileSize: z.string().optional().describe("File size for videos and 3D models")
+    })).describe("Array of upload requests")
+  },
+  async ({ uploads }) => {
+    const client = new ShopifyClient();
+    try {
+      const result = await client.createStagedUploads(
+        SHOPIFY_ACCESS_TOKEN,
+        MYSHOPIFY_DOMAIN,
+        uploads
+      );
+      return {
+        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+      };
+    } catch (error) {
+      return handleError("Failed to create staged uploads", error);
+    }
+  }
+);
+
+server.tool(
+  "create-product-media",
+  "Add media files to a product after uploading them",
+  {
+    productId: z.string().describe("Product ID to add media to"),
+    media: z.array(z.object({
+      alt: z.string().optional().describe("Alt text for the media"),
+      mediaContentType: z.enum(["IMAGE", "VIDEO", "EXTERNAL_VIDEO", "MODEL_3D"]).describe("Media content type"),
+      originalSource: z.string().describe("URL from staged upload")
+    })).describe("Array of media to add")
+  },
+  async ({ productId, media }) => {
+    const client = new ShopifyClient();
+    try {
+      const result = await client.createProductMedia(
+        SHOPIFY_ACCESS_TOKEN,
+        MYSHOPIFY_DOMAIN,
+        productId,
+        media
+      );
+      return {
+        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+      };
+    } catch (error) {
+      return handleError("Failed to create product media", error);
+    }
+  }
+);
+
+server.tool(
+  "set-metafields",
+  "Set metafields for products, variants, or other resources",
+  {
+    metafields: z.array(z.object({
+      key: z.string().describe("Metafield key"),
+      namespace: z.string().describe("Metafield namespace"),
+      ownerId: z.string().describe("ID of the resource that owns the metafield"),
+      type: z.string().describe("Metafield type (e.g., single_line_text_field)"),
+      value: z.string().describe("Metafield value")
+    })).describe("Array of metafields to set")
+  },
+  async ({ metafields }) => {
+    const client = new ShopifyClient();
+    try {
+      const result = await client.setMetafields(
+        SHOPIFY_ACCESS_TOKEN,
+        MYSHOPIFY_DOMAIN,
+        metafields
+      );
+      return {
+        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+      };
+    } catch (error) {
+      return handleError("Failed to set metafields", error);
+    }
+  }
+);
+
+server.tool(
+  "create-collection",
+  "Create a new collection",
+  {
+    title: z.string().describe("Collection title"),
+    descriptionHtml: z.string().optional().describe("Collection description in HTML"),
+    handle: z.string().optional().describe("Collection handle/slug"),
+    products: z.array(z.string()).optional().describe("Array of product IDs to include"),
+    ruleSet: z.object({
+      appliedDisjunctively: z.boolean(),
+      rules: z.array(z.object({
+        column: z.string(),
+        relation: z.string(),
+        condition: z.string()
+      }))
+    }).optional().describe("Smart collection rules"),
+    metafields: z.array(z.object({
+      key: z.string(),
+      namespace: z.string(),
+      value: z.string(),
+      type: z.string()
+    })).optional().describe("Collection metafields")
+  },
+  async ({ title, descriptionHtml, handle, products, ruleSet, metafields }) => {
+    const client = new ShopifyClient();
+    try {
+      const collection = await client.createCollection(
+        SHOPIFY_ACCESS_TOKEN,
+        MYSHOPIFY_DOMAIN,
+        {
+          title,
+          descriptionHtml,
+          handle,
+          products,
+          ruleSet,
+          metafields
+        }
+      );
+      return {
+        content: [{ type: "text", text: JSON.stringify(collection, null, 2) }],
+      };
+    } catch (error) {
+      return handleError("Failed to create collection", error);
+    }
+  }
+);
+
+server.tool(
+  "update-collection",
+  "Update an existing collection",
+  {
+    id: z.string().describe("Collection ID to update"),
+    title: z.string().optional().describe("Collection title"),
+    descriptionHtml: z.string().optional().describe("Collection description in HTML"),
+    handle: z.string().optional().describe("Collection handle/slug"),
+    products: z.array(z.string()).optional().describe("Array of product IDs to include"),
+    ruleSet: z.object({
+      appliedDisjunctively: z.boolean(),
+      rules: z.array(z.object({
+        column: z.string(),
+        relation: z.string(),
+        condition: z.string()
+      }))
+    }).optional().describe("Smart collection rules"),
+    metafields: z.array(z.object({
+      key: z.string(),
+      namespace: z.string(),
+      value: z.string(),
+      type: z.string()
+    })).optional().describe("Collection metafields")
+  },
+  async ({ id, title, descriptionHtml, handle, products, ruleSet, metafields }) => {
+    const client = new ShopifyClient();
+    try {
+      const collection = await client.updateCollection(
+        SHOPIFY_ACCESS_TOKEN,
+        MYSHOPIFY_DOMAIN,
+        {
+          id,
+          title,
+          descriptionHtml,
+          handle,
+          products,
+          ruleSet,
+          metafields
+        }
+      );
+      return {
+        content: [{ type: "text", text: JSON.stringify(collection, null, 2) }],
+      };
+    } catch (error) {
+      return handleError("Failed to update collection", error);
+    }
+  }
+);
+
 // Utility function to handle errors
 function handleError(
   defaultMessage: string,

@@ -616,9 +616,7 @@ function handleError(
   isError: boolean;
 } {
   let errorMessage = defaultMessage;
-  if (error instanceof CustomError) {
-    errorMessage = `${defaultMessage}: ${error.message}`;
-  } else if (error instanceof Error) {
+  if (error instanceof Error) {
     errorMessage = `${defaultMessage}: ${error.message}`;
     console.error("Full error details:", error);
   } else {

@@ -609,7 +609,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables: {
@@ -709,7 +709,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables: {
@@ -771,7 +771,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables: {
@@ -912,7 +912,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables,
@@ -929,9 +929,11 @@ export class ShopifyClient implements ShopifyClientPort {
     shop: string,
     queryParams: ShopifyLoadOrderQueryParams
   ): Promise<ShopifyOrder> {
+    const myshopifyDomain = await this.getMyShopifyDomain(accessToken, shop);
+
     const res = await this.shopifyHTTPRequest<{ order: ShopifyOrder }>({
       method: "GET",
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/orders/${queryParams.orderId}.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/orders/${queryParams.orderId}.json`,
       accessToken,
       params: {
         fields: this.getOrdersFields(queryParams.fields),
@@ -947,6 +949,7 @@ export class ShopifyClient implements ShopifyClientPort {
     queryParams: ShopifyCollectionsQueryParams,
     next?: string
   ): Promise<LoadCollectionsResponse> {
+    const myshopifyDomain = await this.getMyShopifyDomain(accessToken, shop);
     const nextList = next?.split(",");
     const customNext = nextList?.[0];
     const smartNext = nextList?.[1];
@@ -959,7 +962,7 @@ export class ShopifyClient implements ShopifyClientPort {
       const customRes =
         await this.shopifyHTTPRequest<ShopifyCustomCollectionsResponse>({
           method: "GET",
-          url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/custom_collections.json`,
+          url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/custom_collections.json`,
           accessToken,
           params: {
             limit: queryParams.limit,
@@ -979,7 +982,7 @@ export class ShopifyClient implements ShopifyClientPort {
       const smartRes =
         await this.shopifyHTTPRequest<ShopifySmartCollectionsResponse>({
           method: "GET",
-          url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/smart_collections.json`,
+          url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/smart_collections.json`,
           accessToken,
           params: {
             limit: queryParams.limit,
@@ -1009,9 +1012,11 @@ export class ShopifyClient implements ShopifyClientPort {
     accessToken: string,
     shop: string
   ): Promise<LoadStorefrontsResponse> {
+    const myshopifyDomain = await this.getMyShopifyDomain(accessToken, shop);
+
     const res = await this.shopifyHTTPRequest<LoadStorefrontsResponse>({
       method: "GET",
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/shop.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/shop.json`,
       accessToken,
     });
 
@@ -1033,7 +1038,7 @@ export class ShopifyClient implements ShopifyClientPort {
     `;
 
     const res = await this.shopifyGraphqlRequest<ShopResponse>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
     });
@@ -1065,7 +1070,7 @@ export class ShopifyClient implements ShopifyClientPort {
     `;
 
     const res = await this.shopifyGraphqlRequest<ShopResponse>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
     });
@@ -1123,7 +1128,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
     });
@@ -1244,7 +1249,7 @@ export class ShopifyClient implements ShopifyClientPort {
         >;
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
     });
@@ -1388,7 +1393,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables: {
@@ -1449,7 +1454,7 @@ export class ShopifyClient implements ShopifyClientPort {
         >;
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
     });
@@ -1474,9 +1479,11 @@ export class ShopifyClient implements ShopifyClientPort {
     limit?: number,
     next?: string
   ): Promise<LoadCustomersResponse> {
+    const myshopifyDomain = await this.getMyShopifyDomain(accessToken, shop);
+
     const res = await this.shopifyHTTPRequest<{ customers: any[] }>({
       method: "GET",
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/customers.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/customers.json`,
       accessToken,
       params: {
         limit: limit ?? 250,
@@ -1528,7 +1535,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables: {
@@ -1598,7 +1605,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables: {
@@ -1677,7 +1684,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables: {
@@ -1729,7 +1736,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables: {
@@ -1754,6 +1761,8 @@ export class ShopifyClient implements ShopifyClientPort {
     shop: string,
     productInput: ProductCreateInput
   ): Promise<ProductCreateResponse> {
+    const myshopifyDomain = await this.getMyShopifyDomain(accessToken, shop);
+
     const graphqlQuery = gql`
       mutation productCreate($input: ProductInput!) {
         productCreate(input: $input) {
@@ -1803,7 +1812,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables
@@ -1832,6 +1841,8 @@ export class ShopifyClient implements ShopifyClientPort {
     shop: string,
     productInput: ProductUpdateInput
   ): Promise<ProductUpdateResponse> {
+    const myshopifyDomain = await this.getMyShopifyDomain(accessToken, shop);
+
     const graphqlQuery = gql`
       mutation ProductUpdate($product: ProductUpdateInput!) {
         productUpdate(product: $product) {
@@ -1881,7 +1892,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables
@@ -1911,6 +1922,8 @@ export class ShopifyClient implements ShopifyClientPort {
     productId: string,
     variants: ProductVariantsBulkInput[]
   ): Promise<ProductVariantsBulkCreateResponse> {
+    const myshopifyDomain = await this.getMyShopifyDomain(accessToken, shop);
+
     const graphqlQuery = gql`
       mutation ProductVariantsBulkCreate($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
         productVariantsBulkCreate(productId: $productId, variants: $variants) {
@@ -1958,7 +1971,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables
@@ -1987,6 +2000,8 @@ export class ShopifyClient implements ShopifyClientPort {
     productId: string,
     variants: ProductVariantsBulkInput[]
   ): Promise<ProductVariantsBulkUpdateResponse> {
+    const myshopifyDomain = await this.getMyShopifyDomain(accessToken, shop);
+
     const graphqlQuery = gql`
       mutation ProductVariantsBulkUpdate($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
         productVariantsBulkUpdate(productId: $productId, variants: $variants) {
@@ -2035,7 +2050,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables
@@ -2064,6 +2079,8 @@ export class ShopifyClient implements ShopifyClientPort {
     productId: string,
     variantIds: string[]
   ): Promise<ProductVariantsBulkDeleteResponse> {
+    const myshopifyDomain = await this.getMyShopifyDomain(accessToken, shop);
+
     const graphqlQuery = gql`
       mutation ProductVariantsBulkDelete($productId: ID!, $variantsIds: [ID!]!) {
         productVariantsBulkDelete(productId: $productId, variantsIds: $variantsIds) {
@@ -2093,7 +2110,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables
@@ -2121,6 +2138,8 @@ export class ShopifyClient implements ShopifyClientPort {
     shop: string,
     uploads: StagedUploadInput[]
   ): Promise<StagedUploadsCreateResponse> {
+    const myshopifyDomain = await this.getMyShopifyDomain(accessToken, shop);
+
     const graphqlQuery = gql`
       mutation StagedUploadsCreate($input: [StagedUploadInput!]!) {
         stagedUploadsCreate(input: $input) {
@@ -2165,7 +2184,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables
@@ -2193,6 +2212,8 @@ export class ShopifyClient implements ShopifyClientPort {
     productId: string,
     media: CreateMediaInput[]
   ): Promise<ProductCreateMediaResponse> {
+    const myshopifyDomain = await this.getMyShopifyDomain(accessToken, shop);
+
     const graphqlQuery = gql`
       mutation ProductCreateMedia($media: [CreateMediaInput!]!, $productId: ID!) {
         productCreateMedia(media: $media, productId: $productId) {
@@ -2236,7 +2257,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables
@@ -2266,6 +2287,8 @@ export class ShopifyClient implements ShopifyClientPort {
     shop: string,
     metafields: MetafieldsSetInput[]
   ): Promise<MetafieldsSetResponse> {
+    const myshopifyDomain = await this.getMyShopifyDomain(accessToken, shop);
+
     const graphqlQuery = gql`
       mutation MetafieldsSet($metafields: [MetafieldsSetInput!]!) {
         metafieldsSet(metafields: $metafields) {
@@ -2291,7 +2314,9 @@ export class ShopifyClient implements ShopifyClientPort {
       metafields: metafields.map(metafield => ({
         key: metafield.key,
         namespace: metafield.namespace,
-        ownerId: metafield.ownerId,
+        ownerId: metafield.ownerId.startsWith('gid://') ? metafield.ownerId : (() => {
+          throw new Error(`ownerId must be in GID format (e.g., gid://shopify/Product/123). Received: ${metafield.ownerId}`);
+        })(),
         type: metafield.type,
         value: metafield.value
       }))
@@ -2313,7 +2338,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables
@@ -2340,6 +2365,8 @@ export class ShopifyClient implements ShopifyClientPort {
     shop: string,
     collectionInput: CollectionCreateInput
   ): Promise<CollectionCreateResponse> {
+    const myshopifyDomain = await this.getMyShopifyDomain(accessToken, shop);
+
     const graphqlQuery = gql`
       mutation CollectionCreate($input: CollectionInput!) {
         collectionCreate(input: $input) {
@@ -2362,7 +2389,7 @@ export class ShopifyClient implements ShopifyClientPort {
         title: collectionInput.title,
         descriptionHtml: collectionInput.descriptionHtml,
         handle: collectionInput.handle,
-        products: collectionInput.products,
+        products: collectionInput.products?.map(id => this.ensureGid(id, 'Product')),
         ruleSet: collectionInput.ruleSet,
         metafields: collectionInput.metafields?.map(metafield => ({
           key: metafield.key,
@@ -2386,7 +2413,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables
@@ -2415,6 +2442,8 @@ export class ShopifyClient implements ShopifyClientPort {
     shop: string,
     collectionInput: CollectionUpdateInput
   ): Promise<CollectionUpdateResponse> {
+    const myshopifyDomain = await this.getMyShopifyDomain(accessToken, shop);
+
     const graphqlQuery = gql`
       mutation CollectionUpdate($input: CollectionInput!) {
         collectionUpdate(input: $input) {
@@ -2462,7 +2491,7 @@ export class ShopifyClient implements ShopifyClientPort {
         };
       };
     }>({
-      url: `https://${shop}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
+      url: `https://${myshopifyDomain}/admin/api/${this.SHOPIFY_API_VERSION}/graphql.json`,
       accessToken,
       query: graphqlQuery,
       variables

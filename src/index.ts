@@ -206,7 +206,7 @@ server.tool(
         variantIds
       );
       return {
-        content: [{ type: "text", text: JSON.stringify(variants, null, 2) }],
+        content: [{ type: "text", text: safeJsonStringify(variants) }],
       };
     } catch (error) {
       return handleError("Failed to retrieve variants", error);
@@ -232,7 +232,7 @@ server.tool(
         next
       );
       return {
-        content: [{ type: "text", text: JSON.stringify(response, null, 2) }],
+        content: [{ type: "text", text: safeJsonStringify(response) }],
       };
     } catch (error) {
       return handleError("Failed to retrieve customers data", error);
@@ -332,7 +332,7 @@ server.tool(
         { orderId }
       );
       return {
-        content: [{ type: "text", text: JSON.stringify(order, null, 2) }],
+        content: [{ type: "text", text: safeJsonStringify(order) }],
       };
     } catch (error) {
       return handleError("Failed to retrieve order", error);
@@ -392,7 +392,7 @@ server.tool(
         discountInput
       );
       return {
-        content: [{ type: "text", text: JSON.stringify(discount, null, 2) }],
+        content: [{ type: "text", text: safeJsonStringify(discount) }],
       };
     } catch (error) {
       return handleError("Failed to create discount", error);
@@ -445,7 +445,7 @@ server.tool(
         draftOrderData
       );
       return {
-        content: [{ type: "text", text: JSON.stringify(draftOrder, null, 2) }],
+        content: [{ type: "text", text: safeJsonStringify(draftOrder) }],
       };
     } catch (error) {
       return handleError("Failed to create draft order", error);
@@ -471,7 +471,7 @@ server.tool(
       );
       return {
         content: [
-          { type: "text", text: JSON.stringify(completedOrder, null, 2) },
+          { type: "text", text: safeJsonStringify(completedOrder) },
         ],
       };
     } catch (error) {
@@ -501,7 +501,7 @@ server.tool(
         { limit, name }
       );
       return {
-        content: [{ type: "text", text: JSON.stringify(collections, null, 2) }],
+        content: [{ type: "text", text: safeJsonStringify(collections) }],
       };
     } catch (error) {
       return handleError("Failed to retrieve collections", error);
@@ -515,7 +515,7 @@ server.tool("get-shop", "Get shop details", {}, async () => {
   try {
     const shop = await client.loadShop(SHOPIFY_ACCESS_TOKEN, MYSHOPIFY_DOMAIN);
     return {
-      content: [{ type: "text", text: JSON.stringify(shop, null, 2) }],
+      content: [{ type: "text", text: safeJsonStringify(shop) }],
     };
   } catch (error) {
     return handleError("Failed to retrieve shop details", error);
@@ -534,7 +534,7 @@ server.tool(
         MYSHOPIFY_DOMAIN
       );
       return {
-        content: [{ type: "text", text: JSON.stringify(shopDetails, null, 2) }],
+        content: [{ type: "text", text: safeJsonStringify(shopDetails) }],
       };
     } catch (error) {
       return handleError("Failed to retrieve extended shop details", error);
@@ -571,7 +571,7 @@ server.tool(
             topic
           );
           return {
-            content: [{ type: "text", text: JSON.stringify(webhook, null, 2) }],
+            content: [{ type: "text", text: safeJsonStringify(webhook) }],
           };
         }
         case "find": {
@@ -582,7 +582,7 @@ server.tool(
             topic
           );
           return {
-            content: [{ type: "text", text: JSON.stringify(webhook, null, 2) }],
+            content: [{ type: "text", text: safeJsonStringify(webhook) }],
           };
         }
         case "unsubscribe": {
@@ -651,7 +651,7 @@ server.tool(
         }
       );
       return {
-        content: [{ type: "text", text: JSON.stringify(product, null, 2) }],
+        content: [{ type: "text", text: safeJsonStringify(product) }],
       };
     } catch (error) {
       return handleError("Failed to create product", error);
@@ -697,7 +697,7 @@ server.tool(
         }
       );
       return {
-        content: [{ type: "text", text: JSON.stringify(product, null, 2) }],
+        content: [{ type: "text", text: safeJsonStringify(product) }],
       };
     } catch (error) {
       return handleError("Failed to update product", error);
@@ -743,7 +743,7 @@ server.tool(
         variants
       );
       return {
-        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        content: [{ type: "text", text: safeJsonStringify(result) }],
       };
     } catch (error) {
       return handleError("Failed to create product variants", error);
@@ -790,7 +790,7 @@ server.tool(
         variants
       );
       return {
-        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        content: [{ type: "text", text: safeJsonStringify(result) }],
       };
     } catch (error) {
       return handleError("Failed to update product variants", error);
@@ -815,7 +815,7 @@ server.tool(
         variantIds
       );
       return {
-        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        content: [{ type: "text", text: safeJsonStringify(result) }],
       };
     } catch (error) {
       return handleError("Failed to delete product variants", error);
@@ -862,7 +862,7 @@ server.tool(
       };
       
       return {
-        content: [{ type: "text", text: JSON.stringify(safeResult, null, 2) }],
+        content: [{ type: "text", text: safeJsonStringify(safeResult) }],
       };
     } catch (error) {
       return handleError("Failed to create staged uploads", error);
@@ -891,7 +891,7 @@ server.tool(
         media
       );
       return {
-        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        content: [{ type: "text", text: safeJsonStringify(result) }],
       };
     } catch (error) {
       return handleError("Failed to create product media", error);
@@ -920,7 +920,7 @@ server.tool(
         metafields
       );
       return {
-        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        content: [{ type: "text", text: safeJsonStringify(result) }],
       };
     } catch (error) {
       return handleError("Failed to set metafields", error);
@@ -967,7 +967,7 @@ server.tool(
         }
       );
       return {
-        content: [{ type: "text", text: JSON.stringify(collection, null, 2) }],
+        content: [{ type: "text", text: safeJsonStringify(collection) }],
       };
     } catch (error) {
       return handleError("Failed to create collection", error);
@@ -1016,13 +1016,27 @@ server.tool(
         }
       );
       return {
-        content: [{ type: "text", text: JSON.stringify(collection, null, 2) }],
+        content: [{ type: "text", text: safeJsonStringify(collection) }],
       };
     } catch (error) {
       return handleError("Failed to update collection", error);
     }
   }
 );
+
+// Utility function to safely serialize responses avoiding circular references
+function safeJsonStringify(obj: any): string {
+  const seen = new Set();
+  return JSON.stringify(obj, (key, value) => {
+    if (typeof value === "object" && value !== null) {
+      if (seen.has(value)) {
+        return "[Circular Reference]";
+      }
+      seen.add(value);
+    }
+    return value;
+  }, 2);
+}
 
 // Utility function to handle errors
 function handleError(

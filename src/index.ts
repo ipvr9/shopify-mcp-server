@@ -843,8 +843,26 @@ server.tool(
         MYSHOPIFY_DOMAIN,
         uploads
       );
+      
+      // Safely serialize only the needed data to avoid circular references
+      const safeResult = {
+        stagedTargets: result.stagedTargets?.map(target => ({
+          url: target.url,
+          resourceUrl: target.resourceUrl,
+          parameters: target.parameters?.map(param => ({
+            name: param.name,
+            value: param.value
+          }))
+        })) || [],
+        userErrors: result.userErrors?.map(error => ({
+          field: error.field,
+          message: error.message,
+          code: error.code
+        })) || []
+      };
+      
       return {
-        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        content: [{ type: "text", text: JSON.stringify(safeResult, null, 2) }],
       };
     } catch (error) {
       return handleError("Failed to create staged uploads", error);

@@ -205,8 +205,11 @@ server.tool(
         MYSHOPIFY_DOMAIN,
         variantIds
       );
+      const formattedVariants = variants.variants.map(variant => 
+        `Variant: ${variant.title}\nID: ${variant.id}\nPrice: ${variant.price}\nSKU: ${variant.sku || 'N/A'}\nProduct: ${variant.product.title}`
+      ).join('\n\n');
       return {
-        content: [{ type: "text", text: safeJsonStringify(variants) }],
+        content: [{ type: "text", text: formattedVariants }],
       };
     } catch (error) {
       return handleError("Failed to retrieve variants", error);
@@ -844,25 +847,27 @@ server.tool(
         uploads
       );
       
-      // Safely serialize only the needed data to avoid circular references
-      const safeResult = {
-        stagedTargets: result.stagedTargets?.map(target => ({
-          url: target.url,
-          resourceUrl: target.resourceUrl,
-          parameters: target.parameters?.map(param => ({
-            name: param.name,
-            value: param.value
-          }))
-        })) || [],
-        userErrors: result.userErrors?.map(error => ({
-          field: error.field,
-          message: error.message,
-          code: error.code
-        })) || []
-      };
+      // Format as simple text instead of JSON to avoid circular references
+      let formattedResult = "Staged Upload Results:\n\n";
+      
+      if (result.stagedTargets && result.stagedTargets.length > 0) {
+        result.stagedTargets.forEach((target, index) => {
+          formattedResult += `Target ${index + 1}:\n`;
+          formattedResult += `  Upload URL: ${target.url}\n`;
+          formattedResult += `  Resource URL: ${target.resourceUrl}\n`;
+          formattedResult += `  Parameters: ${target.parameters?.length || 0} parameters\n\n`;
+        });
+      }
+      
+      if (result.userErrors && result.userErrors.length > 0) {
+        formattedResult += "Errors:\n";
+        result.userErrors.forEach(error => {
+          formattedResult += `  - ${error.message}\n`;
+        });
+      }
       
       return {
-        content: [{ type: "text", text: safeJsonStringify(safeResult) }],
+        content: [{ type: "text", text: formattedResult }],
       };
     } catch (error) {
       return handleError("Failed to create staged uploads", error);

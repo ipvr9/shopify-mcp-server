@@ -1756,11 +1756,23 @@ export class ShopifyClient implements ShopifyClientPort {
 
   // New product management methods implementation
 
+  /**
+   * Creates a new product in the Shopify store
+   * @param accessToken - Shopify API access token
+   * @param shop - Shop domain
+   * @param productInput - Product creation input data
+   * @returns Promise with created product data and any errors
+   */
   async createProduct(
     accessToken: string,
     shop: string,
     productInput: ProductCreateInput
   ): Promise<ProductCreateResponse> {
+    // Validate required fields
+    if (!productInput.title || productInput.title.trim() === '') {
+      throw new Error('Product title is required');
+    }
+    
     const myshopifyDomain = await this.getMyShopifyDomain(accessToken, shop);
 
     const graphqlQuery = gql`
@@ -1836,11 +1848,23 @@ export class ShopifyClient implements ShopifyClientPort {
     };
   }
 
+  /**
+   * Updates an existing product in the Shopify store
+   * @param accessToken - Shopify API access token
+   * @param shop - Shop domain
+   * @param productInput - Product update input data including ID
+   * @returns Promise with updated product data and any errors
+   */
   async updateProduct(
     accessToken: string,
     shop: string,
     productInput: ProductUpdateInput
   ): Promise<ProductUpdateResponse> {
+    // Validate required fields
+    if (!productInput.id) {
+      throw new Error('Product ID is required for update');
+    }
+    
     const myshopifyDomain = await this.getMyShopifyDomain(accessToken, shop);
 
     const graphqlQuery = gql`
@@ -1916,12 +1940,28 @@ export class ShopifyClient implements ShopifyClientPort {
     };
   }
 
+  /**
+   * Creates multiple product variants in bulk
+   * @param accessToken - Shopify API access token
+   * @param shop - Shop domain
+   * @param productId - ID of the product to add variants to
+   * @param variants - Array of variant data to create
+   * @returns Promise with created variants data and any errors
+   */
   async createProductVariantsBulk(
     accessToken: string,
     shop: string,
     productId: string,
     variants: ProductVariantsBulkInput[]
   ): Promise<ProductVariantsBulkCreateResponse> {
+    // Validate inputs
+    if (!productId) {
+      throw new Error('Product ID is required');
+    }
+    if (!variants || variants.length === 0) {
+      throw new Error('At least one variant is required');
+    }
+    
     const myshopifyDomain = await this.getMyShopifyDomain(accessToken, shop);
 
     const graphqlQuery = gql`
@@ -1994,6 +2034,14 @@ export class ShopifyClient implements ShopifyClientPort {
     };
   }
 
+  /**
+   * Updates multiple product variants in bulk
+   * @param accessToken - Shopify API access token
+   * @param shop - Shop domain
+   * @param productId - ID of the product containing the variants
+   * @param variants - Array of variant data to update
+   * @returns Promise with updated variants data and any errors
+   */
   async updateProductVariantsBulk(
     accessToken: string,
     shop: string,
@@ -2073,6 +2121,14 @@ export class ShopifyClient implements ShopifyClientPort {
     };
   }
 
+  /**
+   * Deletes multiple product variants in bulk
+   * @param accessToken - Shopify API access token
+   * @param shop - Shop domain
+   * @param productId - ID of the product containing the variants
+   * @param variantIds - Array of variant IDs to delete
+   * @returns Promise with deletion results and any errors
+   */
   async deleteProductVariantsBulk(
     accessToken: string,
     shop: string,
@@ -2133,6 +2189,13 @@ export class ShopifyClient implements ShopifyClientPort {
     };
   }
 
+  /**
+   * Creates staged uploads for media files to be uploaded to Shopify
+   * @param accessToken - Shopify API access token
+   * @param shop - Shop domain
+   * @param uploads - Array of upload configurations
+   * @returns Promise with staged upload targets and parameters
+   */
   async createStagedUploads(
     accessToken: string,
     shop: string,
@@ -2206,6 +2269,14 @@ export class ShopifyClient implements ShopifyClientPort {
     };
   }
 
+  /**
+   * Adds media files to a product after uploading them
+   * @param accessToken - Shopify API access token
+   * @param shop - Shop domain
+   * @param productId - ID of the product to add media to
+   * @param media - Array of media configurations
+   * @returns Promise with created media data and any errors
+   */
   async createProductMedia(
     accessToken: string,
     shop: string,
@@ -2282,11 +2353,30 @@ export class ShopifyClient implements ShopifyClientPort {
     };
   }
 
+  /**
+   * Sets metafields for products, variants, or other resources
+   * @param accessToken - Shopify API access token
+   * @param shop - Shop domain
+   * @param metafields - Array of metafield data to set
+   * @returns Promise with created/updated metafields and any errors
+   */
   async setMetafields(
     accessToken: string,
     shop: string,
     metafields: MetafieldsSetInput[]
   ): Promise<MetafieldsSetResponse> {
+    // Validate inputs
+    if (!metafields || metafields.length === 0) {
+      throw new Error('At least one metafield is required');
+    }
+    
+    // Validate each metafield
+    metafields.forEach((metafield, index) => {
+      if (!metafield.key || !metafield.namespace || !metafield.ownerId || !metafield.type || metafield.value === undefined) {
+        throw new Error(`Metafield at index ${index} is missing required fields (key, namespace, ownerId, type, value)`);
+      }
+    });
+    
     const myshopifyDomain = await this.getMyShopifyDomain(accessToken, shop);
 
     const graphqlQuery = gql`
@@ -2314,9 +2404,7 @@ export class ShopifyClient implements ShopifyClientPort {
       metafields: metafields.map(metafield => ({
         key: metafield.key,
         namespace: metafield.namespace,
-        ownerId: metafield.ownerId.startsWith('gid://') ? metafield.ownerId : (() => {
-          throw new Error(`ownerId must be in GID format (e.g., gid://shopify/Product/123). Received: ${metafield.ownerId}`);
-        })(),
+        ownerId: this.ensureGid(metafield.ownerId, this.inferResourceType(metafield.ownerId)),
         type: metafield.type,
         value: metafield.value
       }))
@@ -2360,11 +2448,23 @@ export class ShopifyClient implements ShopifyClientPort {
     };
   }
 
+  /**
+   * Creates a new collection in the Shopify store
+   * @param accessToken - Shopify API access token
+   * @param shop - Shop domain
+   * @param collectionInput - Collection creation input data
+   * @returns Promise with created collection data and any errors
+   */
   async createCollection(
     accessToken: string,
     shop: string,
     collectionInput: CollectionCreateInput
   ): Promise<CollectionCreateResponse> {
+    // Validate required fields
+    if (!collectionInput.title || collectionInput.title.trim() === '') {
+      throw new Error('Collection title is required');
+    }
+    
     const myshopifyDomain = await this.getMyShopifyDomain(accessToken, shop);
 
     const graphqlQuery = gql`
@@ -2437,6 +2537,13 @@ export class ShopifyClient implements ShopifyClientPort {
     };
   }
 
+  /**
+   * Updates an existing collection in the Shopify store
+   * @param accessToken - Shopify API access token
+   * @param shop - Shop domain
+   * @param collectionInput - Collection update input data including ID
+   * @returns Promise with updated collection data and any errors
+   */
   async updateCollection(
     accessToken: string,
     shop: string,
@@ -2552,6 +2659,20 @@ export class ShopifyClient implements ShopifyClientPort {
       return id;
     }
     return `gid://shopify/${type}/${id}`;
+  }
+
+  private inferResourceType(ownerId: string): string {
+    // If already a GID, extract the type
+    if (ownerId.startsWith('gid://shopify/')) {
+      const match = ownerId.match(/gid:\/\/shopify\/([^\/]+)\//);
+      if (match && match[1]) {
+        return match[1];
+      }
+    }
+    
+    // Default to Product, but this could be enhanced with more context
+    // Common resource types: Product, ProductVariant, Collection, Customer, Order
+    return 'Product';
   }
 
   async getPriceRule(

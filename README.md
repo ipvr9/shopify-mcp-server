@@ -294,7 +294,7 @@ This server uses Shopify GraphQL Admin API version **2025-04**.
 
 ## Contributing
 
-Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) first.
+Contributions are welcome!
 
 ## Credits
 

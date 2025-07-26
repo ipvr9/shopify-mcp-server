@@ -7,7 +7,6 @@
     "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\""
   },
   "keywords": [],
-  "author": "Amir Bengherbi",
   "license": "MIT",
   "description": "MCP Server for Shopify API, enabling interaction with store data through GraphQL API.",
   "dependencies": {

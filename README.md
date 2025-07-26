@@ -1,8 +1,15 @@
 # Shopify MCP Server
 
-MCP Server for Shopify API, enabling interaction with store data through GraphQL API. This server provides tools for managing products, customers, orders, and more.
+> 🔧 This is a fork of the original [shopify-mcp-server](https://github.com/amir-bengherbi/shopify-mcp-server) by Amir Bengherbi.
 
-<a href="https://glama.ai/mcp/servers/bemvhpy885"><img width="380" height="200" src="https://glama.ai/mcp/servers/bemvhpy885/badge" alt="Shopify Server MCP server" /></a>
+MCP Server for Shopify API, enabling interaction with store data through GraphQL API. This fork includes additional tools for product and collection management.
+
+## What's Different
+
+This fork adds:
+- Additional tools for product/collection management (see New Tools section below)
+- Uses Shopify GraphQL Admin API version 2025-04
+- Includes automatic GID formatting for IDs
 
 ## Features
 
@@ -13,6 +20,8 @@ MCP Server for Shopify API, enabling interaction with store data through GraphQL
 * **Comprehensive Error Handling**: Clear error messages for API and authentication issues
 
 ## Tools
+
+### Original Tools (from upstream)
 
 1. `get-products`
    * Get all products or search by title
@@ -124,6 +133,87 @@ MCP Server for Shopify API, enabling interaction with store data through GraphQL
       * `webhookId` (optional string): Webhook ID (required for unsubscribe)
     * Returns: Webhook details or success message
 
+### New Tools (added in this fork)
+
+16. `create-product`
+    * Create a new product with variants and options
+    * Inputs:
+      * `title` (string): Product title
+      * `descriptionHtml` (optional string): Product description in HTML
+      * `vendor` (optional string): Product vendor
+      * `productType` (optional string): Product type
+      * `handle` (optional string): Product handle/slug
+      * `status` (optional enum): Product status (ACTIVE, ARCHIVED, DRAFT)
+      * `tags` (optional array): Product tags
+      * `productOptions` (optional array): Product options (e.g., Size, Color)
+      * `metafields` (optional array): Product metafields
+    * Returns: Created product details
+
+17. `update-product`
+    * Update an existing product
+    * Inputs:
+      * `id` (string): Product ID to update
+      * All other fields from create-product (optional)
+    * Returns: Updated product details
+
+18. `create-product-variants-bulk`
+    * Create multiple variants for a product
+    * Inputs:
+      * `productId` (string): Product ID to add variants to
+      * `variants` (array): Array of variant objects with optionValues, price, barcode, etc.
+    * Returns: Created variants details
+
+19. `update-product-variants-bulk`
+    * Update multiple variants for a product
+    * Inputs:
+      * `productId` (string): Product ID
+      * `variants` (array): Array of variant objects with id and fields to update
+    * Returns: Updated variants details
+
+20. `delete-product-variants-bulk`
+    * Delete multiple variants from a product
+    * Inputs:
+      * `productId` (string): Product ID
+      * `variantIds` (array): Array of variant IDs to delete
+    * Returns: Deletion confirmation
+
+21. `create-staged-uploads`
+    * Stage media files for upload to Shopify
+    * Inputs:
+      * `uploads` (array): Array of upload requests with filename, mimeType, resource type
+    * Returns: Staged upload URLs and parameters
+
+22. `create-product-media`
+    * Add media files to a product
+    * Inputs:
+      * `productId` (string): Product ID to add media to
+      * `media` (array): Array of media objects with originalSource URLs
+    * Returns: Created media details
+
+23. `set-metafields`
+    * Set metafields for products, variants, or other resources
+    * Inputs:
+      * `metafields` (array): Array of metafield objects with key, namespace, ownerId, type, value
+    * Returns: Created/updated metafield details
+
+24. `create-collection`
+    * Create a new collection
+    * Inputs:
+      * `title` (string): Collection title
+      * `descriptionHtml` (optional string): Collection description
+      * `handle` (optional string): Collection handle
+      * `products` (optional array): Product IDs to include
+      * `ruleSet` (optional object): Smart collection rules
+      * `metafields` (optional array): Collection metafields
+    * Returns: Created collection details
+
+25. `update-collection`
+    * Update an existing collection
+    * Inputs:
+      * `id` (string): Collection ID to update
+      * All other fields from create-collection (optional)
+    * Returns: Updated collection details
+
 ## Setup
 
 ### Shopify Access Token
@@ -150,14 +240,16 @@ More details on how to create a Shopify app can be found [here](https://help.sho
 
 ### Usage with Claude Desktop
 
+Since this is a fork, you'll need to run it locally. First clone and build this repository (see Development section below).
+
 Add to your `claude_desktop_config.json`:
 
 ```json
 {
   "mcpServers": {
     "shopify": {
-      "command": "npx",
-      "args": ["-y", "shopify-mcp-server"],
+      "command": "node",
+      "args": ["/path/to/your/shopify-mcp-server/build/index.js"],
       "env": {
         "SHOPIFY_ACCESS_TOKEN": "<YOUR_ACCESS_TOKEN>",
         "MYSHOPIFY_DOMAIN": "<YOUR_SHOP>.myshopify.com"
@@ -166,6 +258,8 @@ Add to your `claude_desktop_config.json`:
   }
 }
 ```
+
+> **Note**: Replace `/path/to/your/shopify-mcp-server` with the actual path where you cloned this repository.
 
 ## Development
 
@@ -194,19 +288,26 @@ npm test
 - graphql-request - GraphQL client for Shopify API
 - zod - Runtime type validation
 
+## API Version
+
+This server uses Shopify GraphQL Admin API version **2025-04**.
+
 ## Contributing
 
 Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) first.
 
+## Credits
+
+- Original author: [Amir Bengherbi](https://github.com/amir-bengherbi)
+- Extended by: [Ryan Boyle](https://github.com/ipvr9) with [Claude (Opus 4)](https://claude.ai)
+- Built with the [Model Context Protocol](https://modelcontextprotocol.io)
+
 ## License
 
-MIT
+MIT - See [LICENSE](LICENSE) file for details.
 
-## Community
+## Support
 
-- [MCP GitHub Discussions](https://github.com/modelcontextprotocol/servers/discussions)
-- [Report Issues](https://github.com/your-username/shopify-mcp-server/issues)
-
----
-
-Built with ❤️ using the [Model Context Protocol](https://modelcontextprotocol.io) 
+- [Report Issues](https://github.com/ipvr9/shopify-mcp-server/issues)
+- [Original Repository](https://github.com/amir-bengherbi/shopify-mcp-server)
+- [MCP GitHub Discussions](https://github.com/modelcontextprotocol/servers/discussions) 

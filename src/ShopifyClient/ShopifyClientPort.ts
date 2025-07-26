@@ -1066,4 +1066,278 @@ export interface ShopifyClientPort {
   getIdFromGid(gid: string): string;
 
   loadShopDetail(accessToken: string, shop: string): Promise<ShopResponse>;
+
+  // New product management methods
+  createProduct(
+    accessToken: string,
+    shop: string,
+    productInput: ProductCreateInput
+  ): Promise<ProductCreateResponse>;
+
+  updateProduct(
+    accessToken: string,
+    shop: string,
+    productInput: ProductUpdateInput
+  ): Promise<ProductUpdateResponse>;
+
+  createProductVariantsBulk(
+    accessToken: string,
+    shop: string,
+    productId: string,
+    variants: ProductVariantsBulkInput[]
+  ): Promise<ProductVariantsBulkCreateResponse>;
+
+  updateProductVariantsBulk(
+    accessToken: string,
+    shop: string,
+    productId: string,
+    variants: ProductVariantsBulkInput[]
+  ): Promise<ProductVariantsBulkUpdateResponse>;
+
+  deleteProductVariantsBulk(
+    accessToken: string,
+    shop: string,
+    productId: string,
+    variantIds: string[]
+  ): Promise<ProductVariantsBulkDeleteResponse>;
+
+  createStagedUploads(
+    accessToken: string,
+    shop: string,
+    uploads: StagedUploadInput[]
+  ): Promise<StagedUploadsCreateResponse>;
+
+  createProductMedia(
+    accessToken: string,
+    shop: string,
+    productId: string,
+    media: CreateMediaInput[]
+  ): Promise<ProductCreateMediaResponse>;
+
+  setMetafields(
+    accessToken: string,
+    shop: string,
+    metafields: MetafieldsSetInput[]
+  ): Promise<MetafieldsSetResponse>;
+
+  createCollection(
+    accessToken: string,
+    shop: string,
+    collectionInput: CollectionCreateInput
+  ): Promise<CollectionCreateResponse>;
+
+  updateCollection(
+    accessToken: string,
+    shop: string,
+    collectionInput: CollectionUpdateInput
+  ): Promise<CollectionUpdateResponse>;
 }
+
+// New type definitions for product management
+
+export type ProductOptionInput = {
+  name: string;
+  values: Array<{ name: string }>;
+};
+
+export type ProductCreateInput = {
+  title: string;
+  descriptionHtml?: string;
+  vendor?: string;
+  productType?: string;
+  handle?: string;
+  productOptions?: ProductOptionInput[];
+  metafields?: MetafieldInput[];
+  status?: "ACTIVE" | "ARCHIVED" | "DRAFT";
+  tags?: string[];
+};
+
+export type ProductUpdateInput = {
+  id: string;
+  title?: string;
+  descriptionHtml?: string;
+  vendor?: string;
+  productType?: string;
+  handle?: string;
+  status?: "ACTIVE" | "ARCHIVED" | "DRAFT";
+  tags?: string[];
+  metafields?: MetafieldInput[];
+};
+
+export type ProductCreateResponse = {
+  id: string;
+  title: string;
+  handle: string;
+  status: string;
+};
+
+export type ProductUpdateResponse = {
+  id: string;
+  title: string;
+  handle: string;
+  status: string;
+};
+
+export type ProductVariantsBulkInput = {
+  id?: string; // Only for update operations
+  optionValues?: Array<{
+    optionName: string;
+    name: string;
+  }>;
+  price?: string;
+  compareAtPrice?: string;
+  barcode?: string;
+  inventoryPolicy?: "DENY" | "CONTINUE";
+  inventoryItem?: {
+    cost?: string;
+    tracked?: boolean;
+  };
+  mediaId?: string;
+  metafields?: MetafieldInput[];
+};
+
+export type ProductVariantsBulkCreateResponse = {
+  productVariants: Array<{
+    id: string;
+    title: string;
+    price: string;
+    sku?: string;
+  }>;
+  userErrors: UserError[];
+};
+
+export type ProductVariantsBulkUpdateResponse = {
+  productVariants: Array<{
+    id: string;
+    title: string;
+    price: string;
+    sku?: string;
+  }>;
+  userErrors: UserError[];
+};
+
+export type ProductVariantsBulkDeleteResponse = {
+  product: {
+    id: string;
+  };
+  userErrors: UserError[];
+};
+
+export type StagedUploadInput = {
+  filename: string;
+  mimeType: string;
+  httpMethod: "POST";
+  resource: "IMAGE" | "VIDEO" | "MODEL_3D";
+  fileSize?: string;
+};
+
+export type StagedUploadsCreateResponse = {
+  stagedTargets: Array<{
+    url: string;
+    resourceUrl: string;
+    parameters: Array<{
+      name: string;
+      value: string;
+    }>;
+  }>;
+  userErrors: UserError[];
+};
+
+export type CreateMediaInput = {
+  alt?: string;
+  mediaContentType: "IMAGE" | "VIDEO" | "EXTERNAL_VIDEO" | "MODEL_3D";
+  originalSource: string;
+};
+
+export type ProductCreateMediaResponse = {
+  media: Array<{
+    alt?: string;
+    mediaContentType: string;
+    status: string;
+  }>;
+  mediaUserErrors: UserError[];
+  product: {
+    id: string;
+  };
+};
+
+export type MetafieldInput = {
+  key: string;
+  namespace: string;
+  value: string;
+  type: string;
+};
+
+export type MetafieldsSetInput = {
+  key: string;
+  namespace: string;
+  ownerId: string;
+  type: string;
+  value: string;
+};
+
+export type MetafieldsSetResponse = {
+  metafields: Array<{
+    id: string;
+    key: string;
+    namespace: string;
+    value: string;
+    type: string;
+    createdAt: string;
+    updatedAt: string;
+  }>;
+  userErrors: UserError[];
+};
+
+export type CollectionCreateInput = {
+  title: string;
+  descriptionHtml?: string;
+  handle?: string;
+  metafields?: MetafieldInput[];
+  products?: string[];
+  ruleSet?: {
+    appliedDisjunctively: boolean;
+    rules: Array<{
+      column: string;
+      relation: string;
+      condition: string;
+    }>;
+  };
+};
+
+export type CollectionUpdateInput = {
+  id: string;
+  title?: string;
+  descriptionHtml?: string;
+  handle?: string;
+  metafields?: MetafieldInput[];
+  products?: string[];
+  ruleSet?: {
+    appliedDisjunctively: boolean;
+    rules: Array<{
+      column: string;
+      relation: string;
+      condition: string;
+    }>;
+  };
+};
+
+export type CollectionCreateResponse = {
+  id: string;
+  title: string;
+  handle: string;
+  descriptionHtml?: string;
+};
+
+export type CollectionUpdateResponse = {
+  id: string;
+  title: string;
+  handle: string;
+  descriptionHtml?: string;
+};
+
+export type UserError = {
+  field?: string[];
+  message: string;
+  code?: string;
+};

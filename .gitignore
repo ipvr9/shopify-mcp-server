@@ -2,4 +2,9 @@
 node_modules
 build
 *.md
+!CLAUDE.md
+!AGENTS.md
 test-*.js
+/requirements/
+.claude/
+.conductor/
